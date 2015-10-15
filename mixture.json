@@ -1,0 +1,48 @@
+{
+    "debug": false,
+    "lintScripts": false,
+    "preprocessorLocations": [
+        "public/less",
+        "public/js"
+    ],
+    "preprocessorScriptOutput": "public/js",
+    "preprocessorStyleOutput": "public/css",
+    "projectName": "SimpleModuleCheckLIst",
+    "projectDescription": "Sleek, intuitive, and powerful front-end framework for faster and easier web development.",
+    "publishedId": null,
+    "serverHostname": null,
+    "serverPort": null,
+    "templateDirectory": "templates",
+    "templateDefaultLayout": "layout",
+    "templateDefaultPage": "index",
+    "type": "mixture",
+    "useCompass": false,
+    "simpleModePartnerServer": null,
+    "simpleModeFileTypes": null,
+    "modelSource": null,
+    "domain": null,
+    "convertHtml": {
+        "path": null,
+        "extension": ".html",
+        "ignoreUrls": null,
+        "relativePaths": false,
+        "default": null
+    },
+    "followLeader": true,
+    "routes": null,
+    "customRuby": false,
+    "customRubyPath": null,
+    "remoteDebugPort": 0,
+    "optimiseImages": true,
+    "password": null,
+    "ignoreDir": [
+        "node_modules"
+    ],
+    "customTodos": null,
+    "autoPrefixer": null,
+    "sass": null,
+    "sitemap": false,
+    "less": null,
+    "optimiseSVG": true,
+    "reload": 0
+}

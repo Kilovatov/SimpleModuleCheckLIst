@@ -1,0 +1,43 @@
+body{
+	padding-top: 2em;
+}
+
+@media screen and ( min-width : 1024px ){
+	.container{
+		max-width: 1024px;
+	}
+}
+
+.input-group-addon *{
+	display: inline-block;
+}
+#radio-div{
+	text-align: center;
+}
+input [type=checkbox]{
+	width: 1em;
+	height: 1em;
+}
+.task *{
+	display: inline-block;
+	margin: 0.2em;
+	vertical-align: middle;
+}
+.task button{
+	float: right;
+}
+section{
+	padding: 1em;
+}
+
+.change-task {
+	width: 67%;
+}
+
+
+.form-bottom{
+	margin-top: 4em;
+}
+form{
+	text-align: center;
+}
