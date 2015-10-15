@@ -20,15 +20,6 @@ var MODULE = (function(my) {
         }
     };
 
-    function expiredCondition() {
-        return function(task) {
-            if (task.deadline < new Date()) {
-                return !isDoneCondition(task);
-            } else {
-                return false;
-            }
-        }
-    };
 
     function isDoneCondition() {
         return function(task) {
@@ -78,11 +69,11 @@ var MODULE = (function(my) {
         }, {
             name: 'All',
             condition: function(task) {
-                return !isDoneCondition()(task)
+                return !isDoneCondition(task)
             }
         }, {
             name: 'Done',
-            condition: isDoneCondition()
+            condition: isDoneCondition
         }]
     };
 
