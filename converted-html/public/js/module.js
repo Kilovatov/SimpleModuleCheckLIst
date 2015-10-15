@@ -104,7 +104,7 @@ var MODULE = (function(my){
 
 	    init: function(container){
 			this.render(container);
-			this.addFunctionality();
+			this.addFunctionality(container);
 		},
 
 		renderTask: function(task){
@@ -183,8 +183,8 @@ var MODULE = (function(my){
 	        this.renderTask(task);
 		},
 
-		addFunctionality: function(){
-			var panels = document.getElementsByClassName('tab__control__item');
+		addFunctionality: function(container){
+			var panels = container.getElementsByClassName('tab__control__item');
 	        for(var i = 0; i< panels.length; i++){
 	            panels[i].addEventListener('click',function(){
 	                clearTabControls('tab__control__item');
@@ -196,7 +196,7 @@ var MODULE = (function(my){
 	                }
 	            });
 	        };
-	        var form = document.getElementsByName('create')[0]; 
+	        var form = container.getElementsByName('create')[0]; 
 
 	        form.onsubmit=(function(e){
 	            my.createTask(this);
@@ -209,7 +209,7 @@ var MODULE = (function(my){
     return my;
 	
 	
-}(MODULE || {}));
+}(MODULE));
 
 
 
