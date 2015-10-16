@@ -21,10 +21,8 @@ var MODULE = (function(my) {
     };
 
 
-    function isDoneCondition() {
-        return function(task) {
+    function isDoneCondition(task) {
             return task.done;
-        }
     };
 
     function clearTabControls(className) {
