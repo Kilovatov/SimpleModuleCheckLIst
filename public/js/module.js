@@ -117,73 +117,42 @@ var MODULE = (function(my) {
     };
 
     my.init = function(container, newForm, newTabs) {
-        if (newForm){
+        if (newForm) {
             this.config.myForm = newForm;
-            for (var i = 0; i< newForm.length; i++){
+            for (var i = 0; i < newForm.length; i++) {
                 my.config.tasks.scheme[newForm.name] = newForm.type;
             }
         }
-        if (newTabs){
+        if (newTabs) {
             this.config.tabs.list = newTabs;
         }
         this.render(container);
-        this.addFunctionality(container);
     };
 
     my.renderTask = function(task) {
-        var template = templater(
-            '<section class="task">' +
-            '<input type="checkbox" {{checked}}>' +
-            '<p>{{ task }}</p>' +
-            '<button class="btn btn-default" name="del">delete</button>' +
-            '<button type="button" class="btn btn-default" name="move">move to</button>' +
-            '<button type="button" class="btn btn-default" name="edit">edit</button>' +
-            '</section>');
-        this.toDo.innerHTML += template({
-            task: task.texts,
-            checked: task.done ? 'checked' : ''
-        });
+        this.toDo.innerHTML += '<section class="task">' +
+            '<input type="checkbox"' +
+            '<p>' + task.texts + '</p>' +
+            '</section>';
     };
 
     my.render = function(container) {
-        var form = document.createElement('form');
-        form.name = "create";
-        form.classList.add('form-inline');
+        container.innerHTML = '';
         for (var i = 0; i < this.config.myForm.length; i++) {
-            var div = document.createElement('div');
-            div.classList.add('form-group');
-            div.innerHTML = templater(
-                '<label>{{ label }}</label>' +
-                '<input type={{ myType }} class="form-control"' +
-                'placeholder={{myPlaceholder}} name="myName" required>')({
-                label: this.config.myForm[i].label,
-                myType: this.config.myForm[i].type,
-                myPlaceholder: this.config.myForm[i].placeholder,
-                myName: this.config.myForm[i].name
-            });
-            form.appendChild(div);
-        }
-        var button = document.createElement('button');
-        button.classList.add('btn');
-        button.classList.add('btn-default');
-        button.innerHTML = 'create';
-        form.appendChild(button);
-        container.appendChild(form);
-        var panel = document.createElement('nav');
-        panel.classList.add('nav');
-        panel.classList.add('nav-tabs');
+            container.innerHTML += "<div class='form-group'>" +
+                "<label>" + this.config.myForm[i].label + "</label>" +
+                "<input type='" + this.config.myForm[i].type + "' class='form-control'" +
+                'placeholder="' + this.config.myForm[i].placeholder + '" name="' + this.config.myForm[i].name + '" required>' +
+                "</div>";
+        };
+        container.innerHTML = "<form name='create' class='form-inline' onsubmit = 'MODULE.createTask(this); return false;'>" + container.innerHTML +
+            "<button class='btn btn-default'>create</button></form>";
+        var str = '';
         for (var i = 0; i < this.config.tabs.list.length; i++) {
-            var li = document.createElement('li');
-            li.classList.add('tab__control__item');
-            li.innerHTML = templater('<a href="#">{{ title }}</a>')({
-                title: this.config.tabs.list[i].name
-            });
-            panel.appendChild(li);
-            if (this.config.tabs.list[i].name == 'All') {
-                li.classList.add('active');
-            }
+            str += "<li class='tab__control__item' onclick='MODULE.activePanel(this)'><a href='#'>" +
+                this.config.tabs.list[i].name + "</a></li>";
         }
-        container.appendChild(panel);
+        container.innerHTML += "<nav class='nav nav-tabs'>" + str + "</nav>";
         this.toDo.innerHTML = '';
         for (var i = 0; i < this.config.tasks.list.length; i++) {
             this.renderTask(this.config.tasks.list[i]);
@@ -206,31 +175,16 @@ var MODULE = (function(my) {
         this.renderTask(task);
     };
 
-    my.addFunctionality = function(container) {
-        var panels = container.getElementsByClassName('tab__control__item');
-        for (var i = 0; i < panels.length; i++) {
-            panels[i].addEventListener('click', function() {
-                clearTabControls('tab__control__item');
-                this.classList.add('active');
-                for (var i = 0; i < my.config.tabs.list.length; i++) {
-                    if (my.config.tabs.list[i].name == this.textContent) {
-                        showItems(my.toDo, my.config.tabs.list[i].condition);
-                    }
-                }
-            });
-        };
-        var form = container.getElementsByClassName('form-inline')[0];
-
-        form.onsubmit = (function(e) {
-            my.createTask(this);
-            my.addFunctionality(container);
-            e.preventDefault();
-        });
-    };
-
-
+    my.activePanel = function(panel) {
+        clearTabControls('tab__control__item');
+        panel.classList.add('active');
+        for (var i = 0; i < my.config.tabs.list.length; i++) {
+            if (my.config.tabs.list[i].name == panel.textContent) {
+                showItems(my.toDo, my.config.tabs.list[i].condition);
+            }
+        }
+    }
     return my;
-
 
 }({}));
 
