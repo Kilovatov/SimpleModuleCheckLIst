@@ -116,7 +116,16 @@ var MODULE = (function(my) {
         }
     };
 
-    my.init = function(container) {
+    my.init = function(container, newForm, newTabs) {
+        if (newForm){
+            this.config.myForm = newForm;
+            for (var i = 0; i< newForm.length; i++){
+                my.config.tasks.scheme[newForm.name] = newForm.type;
+            }
+        }
+        if (newTabs){
+            this.config.tabs.list = newTabs;
+        }
         this.render(container);
         this.addFunctionality(container);
     };
