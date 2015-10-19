@@ -12,7 +12,7 @@ var MODULE = (function(my) {
 
     function deadlineCondition(deadline) {
         return function(task) {
-            if (new Date(task.deadline) < deadline && new Date(task.deadline) > new Date() && !isDoneCondition()(task)) {
+            if (new Date(task.deadline) < deadline && new Date(task.deadline) > new Date() && !isDoneCondition(task)) {
                 return true;
             } else {
                 return false;
@@ -22,7 +22,7 @@ var MODULE = (function(my) {
 
 
     function isDoneCondition(task) {
-            return task.done;
+        return task.done;
     };
 
     function clearTabControls(className) {
@@ -33,8 +33,8 @@ var MODULE = (function(my) {
     };
 
     function showItems(container, condition) {
-        for (var i = 0; i < my.tasks.list.length; i++) {
-            if (condition(my.tasks.list[i])) {
+        for (var i = 0; i < my.config.tasks.list.length; i++) {
+            if (condition(my.config.tasks.list[i])) {
                 container.childNodes[i].style.display = 'block';
             } else {
                 container.childNodes[i].style.display = 'none';
@@ -42,53 +42,74 @@ var MODULE = (function(my) {
         }
     };
 
+    my.config = {
+        tasks: {
+            scheme: {
+                texts: 'string',
+                deadline: 'date',
+                done: 'boolean'
+            },
+            list: []
+        },
+
+        tabs: {
+            scheme: {
+                name: 'string',
+                condition: 'function'
+            },
+            list: [{
+                name: 'Today',
+                condition: deadlineCondition((new Date().setDate((new Date()).getDate() + 1)))
+            }, {
+                name: 'Week',
+                condition: deadlineCondition((new Date().setDate((new Date()).getDate() + 7)))
+            }, {
+                name: 'All',
+                condition: function(task) {
+                    return !isDoneCondition(task)
+                }
+            }, {
+                name: 'Done',
+                condition: isDoneCondition
+            }]
+        },
+
+        myForm: [{
+            label: '',
+            type: 'string',
+            name: 'text',
+            placeholder: 'Task'
+        }, {
+            label: 'till',
+            type: 'date',
+            name: 'till',
+            placeholder: new Date()
+        }],
+
+        addNewInput: function(newLabel, newType, newName, newPlaceholder) {
+            my.config.myForm.push({
+                label: newLabel,
+                type: newType,
+                name: newName,
+                placeholder: newPlaceholder
+            });
+            my.config.tasks.scheme[newName] = newType;
+        },
+
+        addNewFilter: function(newName, newCondition) {
+            my.config.tabs.list.push({
+                name: newName,
+                condition: newCondition
+            });
+        }
+    }
+
     my.toDo = document.createElement('div');
 
-    my.tasks = {
-        scheme: {
-            texts: 'string',
-            deadline: 'date',
-            done: 'boolean'
-        },
-        list: []
-    };
 
-    my.tabs = {
-        scheme: {
-            name: 'string',
-            condition: 'function'
-        },
-        list: [{
-            name: 'Today',
-            condition: deadlineCondition((new Date().setDate((new Date()).getDate() + 1)))
-        }, {
-            name: 'Week',
-            condition: deadlineCondition((new Date().setDate((new Date()).getDate() + 7)))
-        }, {
-            name: 'All',
-            condition: function(task) {
-                return !isDoneCondition(task)
-            }
-        }, {
-            name: 'Done',
-            condition: isDoneCondition
-        }]
-    };
-
-    my.formDefault = [{
-        label: '',
-        type: 'text',
-        name: 'text',
-        placeholder: 'Task'
-    }, {
-        label: 'till',
-        type: 'date',
-        name: 'till',
-        placeholder: new Date()
-    }];
 
     my.Task = function(arr) {
-        var keys = Object.keys(my.tasks.scheme);
+        var keys = Object.keys(my.config.tasks.scheme);
         for (var i = 0; i < arr.length; i++) {
             var key = keys[i];
             this[key] = arr[i];
@@ -97,7 +118,7 @@ var MODULE = (function(my) {
 
     my.init = function(container) {
         this.render(container);
-        this.addFunctionality();
+        this.addFunctionality(container);
     };
 
     my.renderTask = function(task) {
@@ -119,17 +140,17 @@ var MODULE = (function(my) {
         var form = document.createElement('form');
         form.name = "create";
         form.classList.add('form-inline');
-        for (var i = 0; i < this.formDefault.length; i++) {
+        for (var i = 0; i < this.config.myForm.length; i++) {
             var div = document.createElement('div');
             div.classList.add('form-group');
             div.innerHTML = templater(
                 '<label>{{ label }}</label>' +
                 '<input type={{ myType }} class="form-control"' +
                 'placeholder={{myPlaceholder}} name="myName" required>')({
-                label: this.formDefault[i].label,
-                myType: this.formDefault[i].type,
-                myPlaceholder: this.formDefault[i].placeholder,
-                myName: this.formDefault[i].name
+                label: this.config.myForm[i].label,
+                myType: this.config.myForm[i].type,
+                myPlaceholder: this.config.myForm[i].placeholder,
+                myName: this.config.myForm[i].name
             });
             form.appendChild(div);
         }
@@ -142,21 +163,21 @@ var MODULE = (function(my) {
         var panel = document.createElement('nav');
         panel.classList.add('nav');
         panel.classList.add('nav-tabs');
-        for (var i = 0; i < this.tabs.list.length; i++) {
+        for (var i = 0; i < this.config.tabs.list.length; i++) {
             var li = document.createElement('li');
             li.classList.add('tab__control__item');
             li.innerHTML = templater('<a href="#">{{ title }}</a>')({
-                title: this.tabs.list[i].name
+                title: this.config.tabs.list[i].name
             });
             panel.appendChild(li);
-            if (this.tabs.list[i].name == 'All') {
+            if (this.config.tabs.list[i].name == 'All') {
                 li.classList.add('active');
             }
         }
         container.appendChild(panel);
         this.toDo.innerHTML = '';
-        for (var i = 0; i < this.tasks.list.length; i++) {
-            this.renderTask(this.tasks.list[i]);
+        for (var i = 0; i < this.config.tasks.list.length; i++) {
+            this.renderTask(this.config.tasks.list[i]);
         }
         container.appendChild(this.toDo);
     };
@@ -171,29 +192,29 @@ var MODULE = (function(my) {
             }
         }
         var task = new this.Task(arr);
-        this.tasks.list.push(task);
+        this.config.tasks.list.push(task);
         form.reset();
         this.renderTask(task);
     };
 
-    my.addFunctionality = function() {
-        var panels = document.getElementsByClassName('tab__control__item');
+    my.addFunctionality = function(container) {
+        var panels = container.getElementsByClassName('tab__control__item');
         for (var i = 0; i < panels.length; i++) {
             panels[i].addEventListener('click', function() {
                 clearTabControls('tab__control__item');
                 this.classList.add('active');
-                for (var i = 0; i < my.tabs.list.length; i++) {
-                    if (my.tabs.list[i].name == this.textContent) {
-                        showItems(my.toDo, my.tabs.list[i].condition);
+                for (var i = 0; i < my.config.tabs.list.length; i++) {
+                    if (my.config.tabs.list[i].name == this.textContent) {
+                        showItems(my.toDo, my.config.tabs.list[i].condition);
                     }
                 }
             });
         };
-        var form = document.getElementsByName('create')[0];
+        var form = container.getElementsByClassName('form-inline')[0];
 
         form.onsubmit = (function(e) {
             my.createTask(this);
-            my.addFunctionality();
+            my.addFunctionality(container);
             e.preventDefault();
         });
     };
