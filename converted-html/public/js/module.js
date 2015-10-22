@@ -1,5 +1,13 @@
 var MODULE = (function(my) {
 
+    function Task(arr) {
+        var keys = Object.keys(my.config.tasks.scheme);
+        for (var i = 0; i < arr.length; i++) {
+            var key = keys[i];
+            this[key] = arr[i];
+        }
+    };
+
     function templater(html) {
         return function(data) {
             for (var x in data) {
@@ -105,13 +113,6 @@ var MODULE = (function(my) {
 
     my.toDo = document.createElement('div');
 
-    my.Task = function(arr) {
-        var keys = Object.keys(my.config.tasks.scheme);
-        for (var i = 0; i < arr.length; i++) {
-            var key = keys[i];
-            this[key] = arr[i];
-        }
-    };
 
     my.init = function(container, newForm, newTabs) {
         if (newForm) {
@@ -133,7 +134,7 @@ var MODULE = (function(my) {
             '</section>');
         this.toDo.innerHTML += template({
             task: task.texts,
-            checked: task.done ? 'checked' : ''
+            checked: task.done? 'checked': ''
         });
     };
 
@@ -145,18 +146,18 @@ var MODULE = (function(my) {
                 "<input type={{myType}} class='form-control'" +
                 'placeholder="{{myPlaceholder}}" name="{{myName}}" required>' +
                 "</div>")({
-                label: this.config.myForm[i].label,
-                myType: this.config.myForm[i].type,
-                myPlaceholder: this.config.myForm[i].placeholder,
-                myName: this.config.myForm[i].name
-            });
+                    label: this.config.myForm[i].label,
+                    myType: this.config.myForm[i].type,
+                    myPlaceholder: this.config.myForm[i].placeholder,
+                    myName: this.config.myForm[i].name
+                });
         };
         container.innerHTML = "<form name='create' class='form-inline' onsubmit = 'MODULE.createTask(this);return false;'>" + container.innerHTML +
             "<button class='btn btn-default'>create</button></form>";
         var str = '';
         for (var i = 0; i < this.config.tabs.list.length; i++) {
             str += templater("<li class='tab__control__item' onclick='MODULE.activePanel(this)'><a href='#'>" +
-                "{{title}}</a></li>")({
+            "{{title}}</a></li>")({
                 title: this.config.tabs.list[i].name
             });
         }
@@ -177,7 +178,7 @@ var MODULE = (function(my) {
                 arr[i] = form.elements[i].value ? form.elements[i].value : false; //false for done field
             }
         }
-        var task = new this.Task(arr);
+        var task = new Task(arr);
         this.config.tasks.list.push(task);
         form.reset();
         this.renderTask(task);

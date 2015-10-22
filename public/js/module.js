@@ -1,5 +1,13 @@
 var MODULE = (function(my) {
 
+    function Task(arr) {
+        var keys = Object.keys(my.config.tasks.scheme);
+        for (var i = 0; i < arr.length; i++) {
+            var key = keys[i];
+            this[key] = arr[i];
+        }
+    };
+
     function templater(html) {
         return function(data) {
             for (var x in data) {
@@ -105,13 +113,6 @@ var MODULE = (function(my) {
 
     my.toDo = document.createElement('div');
 
-    my.Task = function(arr) {
-        var keys = Object.keys(my.config.tasks.scheme);
-        for (var i = 0; i < arr.length; i++) {
-            var key = keys[i];
-            this[key] = arr[i];
-        }
-    };
 
     my.init = function(container, newForm, newTabs) {
         if (newForm) {
@@ -177,7 +178,7 @@ var MODULE = (function(my) {
                 arr[i] = form.elements[i].value ? form.elements[i].value : false; //false for done field
             }
         }
-        var task = new this.Task(arr);
+        var task = new Task(arr);
         this.config.tasks.list.push(task);
         form.reset();
         this.renderTask(task);
